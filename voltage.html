@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voltage Gauge</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f0f4f8;
+      font-family: Arial, sans-serif;
+      color: #333;
+    }
+    .gauge-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 90vw;
+      max-width: 500px;
+      background-color: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .gauge-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1f78d1;
+      margin-bottom: 10px;
+    }
+    .gauge {
+      position: relative;
+      width: 100%;
+      max-width: 250px;
+      height: 125px;
+      border-radius: 100% 100% 0 0;
+      background: #e4e4e7;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .gauge-needle {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 4px;
+      height: 90%;
+      background-color: #d62020;
+      transform-origin: center bottom;
+      transform: rotate(-90deg);
+      transition: transform 0.5s ease;
+    }
+    .gauge-marks {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 15px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .gauge-mark {
+      position: relative;
+      bottom: -10px;
+      text-align: center;
+    }
+    .gauge-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+      margin-top: 10px;
+    }
+    .graph-container {
+      width: 90vw;
+      max-width: 500px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .graph-container iframe {
+      width: 100%;
+      height: 250px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="gauge-container">
+    <div class="gauge-title">Voltage Gauge</div>
+    <div class="gauge">
+      <div class="gauge-needle"></div>
+      <div class="gauge-marks">
+        <div class="gauge-mark">0</div>
+        <div class="gauge-mark">10</div>
+        <div class="gauge-mark">20</div>
+        <div class="gauge-mark">30</div>
+        <div class="gauge-mark">40</div>
+        <div class="gauge-mark">50</div>
+      </div>
+    </div>
+    <div class="gauge-value">0 A</div>
+  </div>
+  
+  <div class="graph-container">
+    <iframe
+      src="https://thingspeak.com/channels/1943049/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"
+      title="Voltafe Graph"
+    ></iframe>
+  </div>
+
+  <script>
+    const gaugeNeedle = document.querySelector(".gauge-needle");
+    const gaugeValueText = document.querySelector(".gauge-value");
+
+    function setGaugeValue(value) {
+      const limitedValue = Math.min(Math.max(value, 0), 50);  // limit the range between 0 and 50
+      const angle = (limitedValue / 50) * 180 - 90;  // Calculate angle for the needle
+      gaugeNeedle.style.transform = `rotate(${angle}deg)`;
+      gaugeValueText.textContent = `${limitedValue} V`;
+    }
+
+    function updateGaugeFromThingSpeak() {
+      const channelID = "1943049";
+      const fieldName = "field3";
+      const apiUrl = `https://api.thingspeak.com/channels/${channelID}/fields/${fieldName}/last.json`;
+
+      fetch(apiUrl)
+        .then((response) => response.json())
+        .then((data) => {
+          const valueFromThingSpeak = parseFloat(data[fieldName]);
+          if (!isNaN(valueFromThingSpeak)) {
+            setGaugeValue(valueFromThingSpeak);
+          } else {
+            alert("Invalid data received from ThingSpeak.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching data from ThingSpeak:", error);
+        });
+    }
+
+    // Initial gauge value setup and periodic update
+    setGaugeValue(0);
+    updateGaugeFromThingSpeak();
+    setInterval(updateGaugeFromThingSpeak, 60000);
+  </script>
+</body>
+</html>
