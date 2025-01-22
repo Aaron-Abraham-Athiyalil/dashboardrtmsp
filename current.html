@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ammeter Gauge</title>
+  <title>Bar Gauge</title>
   <style>
     * {
       margin: 0;
@@ -16,89 +16,64 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-      background-color: #f0f4f8;
-      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       color: #333;
     }
     .gauge-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 90vw;
-      max-width: 500px;
-      background-color: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 80vw;
+      max-width: 400px;
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 10px;
       padding: 20px;
       text-align: center;
-      margin-bottom: 20px;
     }
     .gauge-title {
       font-size: 1.5rem;
       font-weight: bold;
-      color: #1f78d1;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
-    .gauge {
+    .bar-gauge {
       position: relative;
       width: 100%;
-      max-width: 250px;
-      height: 125px;
-      border-radius: 100% 100% 0 0;
-      background: #e4e4e7;
+      max-width: 300px;
+      height: 30px;
+      background-color: #e0e0e0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
       overflow: hidden;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
-    .gauge-needle {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      width: 4px;
-      height: 90%;
-      background-color: #d62020;
-      transform-origin: center bottom;
-      transform: rotate(-90deg);
-      transition: transform 0.5s ease;
-    }
-    .gauge-marks {
-      position: absolute;
-      width: 100%;
+    .bar-gauge-fill {
       height: 100%;
+      background: linear-gradient(to right, #c0392b, #f39c12, #27ae60);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    .gauge-labels {
       display: flex;
       justify-content: space-between;
-      padding: 0 15px;
-      font-size: 0.9rem;
-      color: #555;
-    }
-    /* Gauge marks aligned along the arc */
-    .gauge-mark {
-      position: absolute;
-      width: 5px;
-      height: 5px;
-      background-color: #555;
-      border-radius: 50%;
-      transform-origin: center bottom;
-    }
-    .gauge-mark:nth-child(1) { left: 50%; bottom: 10%; transform: translateX(-50%) rotate(-90deg); } /* Mark 1 */
-    .gauge-mark:nth-child(2) { left: 70%; bottom: 20%; transform: translateX(-50%) rotate(-54deg); } /* Mark 2 */
-    .gauge-mark:nth-child(3) { left: 85%; bottom: 50%; transform: translateX(-50%) rotate(-18deg); } /* Mark 3 */
-    .gauge-mark:nth-child(4) { left: 70%; bottom: 80%; transform: translateX(-50%) rotate(18deg); } /* Mark 4 */
-    .gauge-mark:nth-child(5) { left: 50%; bottom: 90%; transform: translateX(-50%) rotate(54deg); } /* Mark 5 */
-    .gauge-mark:nth-child(6) { left: 30%; bottom: 80%; transform: translateX(-50%) rotate(90deg); } /* Mark 6 */
-    
-    .gauge-value {
-      font-size: 2rem;
+      width: 100%;
+      margin-top: 5px;
+      font-size: 0.8rem;
       font-weight: bold;
       color: #333;
-      margin-top: 10px;
+    }
+    .gauge-value {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 20px;
     }
     .graph-container {
-      width: 90vw;
-      max-width: 500px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      border-radius: 20px;
+      width: 80vw;
+      max-width: 400px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
       overflow: hidden;
+      margin-top: 20px;
     }
     .graph-container iframe {
       width: 100%;
@@ -109,36 +84,36 @@
 </head>
 <body>
   <div class="gauge-container">
-    <div class="gauge-title">Ammeter Gauge</div>
-    <div class="gauge">
-      <div class="gauge-needle"></div>
-      <div class="gauge-marks">
-        <div class="gauge-mark"></div>
-        <div class="gauge-mark"></div>
-        <div class="gauge-mark"></div>
-        <div class="gauge-mark"></div>
-        <div class="gauge-mark"></div>
-        <div class="gauge-mark"></div>
-      </div>
+    <div class="gauge-title">Current</div>
+    <div class="bar-gauge">
+      <div class="bar-gauge-fill"></div>
+    </div>
+    <div class="gauge-labels">
+      <span>0</span>
+      <span>10</span>
+      <span>20</span>
+      <span>30</span>
+      <span>40</span>
+      <span>50</span>
     </div>
     <div class="gauge-value">0 A</div>
   </div>
-  
+
   <div class="graph-container">
     <iframe
-      src="https://thingspeak.com/channels/1943049/charts/1?bgcolor=%23ffffff&color=%231f78d1&dynamic=true&results=60&type=line&update=15"
+      src="https://thingspeak.com/channels/1943049/charts/1?bgcolor=%23ffffff&color=%230056b3&dynamic=true&results=60&type=line&update=1"
       title="Current Graph"
     ></iframe>
   </div>
 
   <script>
-    const gaugeNeedle = document.querySelector(".gauge-needle");
+    const barGaugeFill = document.querySelector(".bar-gauge-fill");
     const gaugeValueText = document.querySelector(".gauge-value");
 
     function setGaugeValue(value) {
-      const limitedValue = Math.min(Math.max(value, 0), 50);  // limit the range between 0 and 50
-      const angle = (limitedValue / 50) * 180 - 90;  // Calculate angle for the needle
-      gaugeNeedle.style.transform = `rotate(${angle}deg)`;
+      const limitedValue = Math.min(Math.max(value, 0), 50);
+      const percentage = (limitedValue / 50) * 100;
+      barGaugeFill.style.width = `${percentage}%`;
       gaugeValueText.textContent = `${limitedValue} A`;
     }
 
@@ -154,7 +129,7 @@
           if (!isNaN(valueFromThingSpeak)) {
             setGaugeValue(valueFromThingSpeak);
           } else {
-            alert("Invalid data received from ThingSpeak.");
+            console.error("Invalid data received from ThingSpeak.");
           }
         })
         .catch((error) => {
@@ -162,10 +137,9 @@
         });
     }
 
-    // Initial gauge value setup and periodic update
     setGaugeValue(0);
     updateGaugeFromThingSpeak();
-    setInterval(updateGaugeFromThingSpeak, 999);
+    setInterval(updateGaugeFromThingSpeak, 1000);
   </script>
 </body>
 </html>
