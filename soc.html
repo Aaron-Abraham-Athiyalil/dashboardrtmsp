@@ -104,7 +104,7 @@
       width="450"
       height="260"
       style="border: 1px solid #cccccc;"
-      src="https://thingspeak.com/channels/1943049/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"
+      src="https://thingspeak.mathworks.com/channels/2732473/charts/3?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"
       title="State of Charge Graph"
     ></iframe>
   </div>
@@ -121,8 +121,8 @@
     }
 
     function updateGaugeFromThingSpeak() {
-      const channelID = "1943049";
-      const fieldName = "field2";
+      const channelID = "2732473";
+      const fieldName = "field3";
       const apiUrl = `https://api.thingspeak.com/channels/${channelID}/fields/${fieldName}/last.json`;
 
       fetch(apiUrl)

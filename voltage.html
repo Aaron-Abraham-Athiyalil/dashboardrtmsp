@@ -101,7 +101,7 @@
 
   <div class="graph-container">
     <iframe
-      src="https://thingspeak.com/channels/1943049/charts/3?bgcolor=%23ffffff&color=%230056b3&dynamic=true&results=60&type=line&update=1"
+      src="https://thingspeak.mathworks.com/channels/2732473/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"
       title="Voltage Graph"
     ></iframe>
   </div>
@@ -118,8 +118,8 @@
     }
 
     function updateGaugeFromThingSpeak() {
-      const channelID = "1943049";
-      const fieldName = "field3";
+      const channelID = "2732473";
+      const fieldName = "field2";
       const apiUrl = `https://api.thingspeak.com/channels/${channelID}/fields/${fieldName}/last.json`;
 
       fetch(apiUrl)
